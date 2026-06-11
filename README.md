@@ -27,4 +27,3 @@ npm run build
 ## Engineering Note
 
 This is a concept visualization and takeoff tool only. Footings, spans, bracing, tie-downs, uplift, soil bearing, waterproofing, local approvals, and manufacturer fixing schedules still require qualified engineering and code review.
-
