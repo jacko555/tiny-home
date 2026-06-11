@@ -13,6 +13,8 @@ export interface PierPosition {
 
 export const OUTER_CONCRETE_PIER_RADIUS_M = 0.5;
 export const CENTRE_CONCRETE_PIER_RADIUS_M = 0.3;
+export const ROOF_END_OVERHANG_M = 0.22;
+export const ROOF_END_OVERHANG_MM = ROOF_END_OVERHANG_M * 1000;
 
 export function divisions(start: number, end: number, targetSpacing: number): number[] {
   const span = Math.abs(end - start);
@@ -140,21 +142,24 @@ export function roofTiePostCentersM(spec: TinyHomeSpec): { x: number; z: number 
 export function roofHeightAt(spec: TinyHomeSpec, x: number, z: number): number {
   const lengthM = mmToM(spec.lengthMm);
   const widthM = mmToM(spec.widthMm);
+  const sideOverhangM = roofSideOverhangM(spec);
   const maxHeightM = mmToM(spec.maxHeightMm);
   const riseM = mmToM(spec.roofRiseMm);
 
   if (spec.roofFallDirection === "length") {
+    const roofLengthM = lengthM + ROOF_END_OVERHANG_M * 2;
     const t =
       spec.roofHighSide === "rear"
-        ? (lengthM / 2 - x) / lengthM
-        : (x + lengthM / 2) / lengthM;
+        ? (lengthM / 2 + ROOF_END_OVERHANG_M - x) / roofLengthM
+        : (x + lengthM / 2 + ROOF_END_OVERHANG_M) / roofLengthM;
     return maxHeightM - riseM * t;
   }
 
+  const roofWidthM = widthM + sideOverhangM * 2;
   const t =
     spec.roofHighSide === "right"
-      ? (widthM / 2 - z) / widthM
-      : (z + widthM / 2) / widthM;
+      ? (widthM / 2 + sideOverhangM - z) / roofWidthM
+      : (z + widthM / 2 + sideOverhangM) / roofWidthM;
   return maxHeightM - riseM * t;
 }
 
@@ -176,6 +181,26 @@ export function roofLowSideLabel(spec: TinyHomeSpec): string {
 
 export function roofRunM(spec: TinyHomeSpec): number {
   const slopeSpanM =
-    spec.roofFallDirection === "length" ? mmToM(spec.lengthMm) : mmToM(spec.widthMm);
+    spec.roofFallDirection === "length" ? roofLengthM(spec) : roofWidthM(spec);
   return Math.hypot(slopeSpanM, mmToM(spec.roofRiseMm));
+}
+
+export function roofSideOverhangM(spec: TinyHomeSpec): number {
+  return mmToM(spec.roofSideOverhangMm);
+}
+
+export function roofWidthM(spec: TinyHomeSpec): number {
+  return mmToM(spec.widthMm) + roofSideOverhangM(spec) * 2;
+}
+
+export function roofWidthMm(spec: TinyHomeSpec): number {
+  return spec.widthMm + spec.roofSideOverhangMm * 2;
+}
+
+export function roofLengthM(spec: TinyHomeSpec): number {
+  return mmToM(spec.lengthMm) + ROOF_END_OVERHANG_M * 2;
+}
+
+export function roofLengthMm(spec: TinyHomeSpec): number {
+  return spec.lengthMm + ROOF_END_OVERHANG_MM * 2;
 }

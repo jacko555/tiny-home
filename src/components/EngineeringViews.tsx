@@ -9,6 +9,8 @@ import {
   roofTiePostCentersM,
   roofHighSideLabel,
   roofLowSideLabel,
+  ROOF_END_OVERHANG_MM,
+  roofWidthM,
 } from "../lib/geometry";
 
 interface EngineeringViewsProps {
@@ -42,6 +44,10 @@ function PlanView({ spec }: EngineeringViewsProps) {
   const studCount = Math.ceil(spec.lengthMm / spec.studSpacingMm);
   const highY = spec.roofHighSide === "right" ? pad + innerH : pad;
   const lowY = spec.roofHighSide === "right" ? pad : pad + innerH;
+  const roofOverhangY = innerH * (spec.roofSideOverhangMm / spec.widthMm);
+  const roofEndOverhangX = innerW * (ROOF_END_OVERHANG_MM / spec.lengthMm);
+  const roofHighY = spec.roofHighSide === "right" ? pad + innerH + roofOverhangY : pad - roofOverhangY;
+  const roofLowY = spec.roofHighSide === "right" ? pad - roofOverhangY : pad + innerH + roofOverhangY;
   const xFromMm = (valueMm: number) => pad + innerW * ((valueMm + spec.lengthMm / 2) / spec.lengthMm);
   const yFromMm = (valueMm: number) => pad + innerH * ((valueMm + spec.widthMm / 2) / spec.widthMm);
   const doubleGapX = Math.max(3.5, (innerW * 74) / spec.lengthMm);
@@ -69,6 +75,13 @@ function PlanView({ spec }: EngineeringViewsProps) {
   return (
     <svg viewBox={`0 0 ${width} ${height}`} role="img" aria-label="Plan view">
       <rect x="0" y="0" width={width} height={height} rx="8" className="drawing-bg" />
+      <rect
+        x={pad - roofEndOverhangX}
+        y={pad - roofOverhangY}
+        width={innerW + roofEndOverhangX * 2}
+        height={innerH + roofOverhangY * 2}
+        className="plan-roof-overhang"
+      />
       <rect x={pad} y={pad} width={innerW} height={innerH} className="plan-shell" />
 
       {spec.layers.exterior && <rect x={pad + 5} y={pad + 5} width={innerW - 10} height={innerH - 10} className="plan-cladding" />}
@@ -134,9 +147,9 @@ function PlanView({ spec }: EngineeringViewsProps) {
 
       {spec.roofFallDirection === "width" && (
         <g className="roof-slope-markers">
-          <line x1={pad + innerW * 0.5} y1={highY} x2={pad + innerW * 0.5} y2={lowY} className="slope-arrow" />
+          <line x1={pad + innerW * 0.5} y1={roofHighY} x2={pad + innerW * 0.5} y2={roofLowY} className="slope-arrow" />
           <polygon
-            points={`${pad + innerW * 0.5 - 6},${lowY - (spec.roofHighSide === "right" ? -10 : 10)} ${pad + innerW * 0.5 + 6},${lowY - (spec.roofHighSide === "right" ? -10 : 10)} ${pad + innerW * 0.5},${lowY}`}
+            points={`${pad + innerW * 0.5 - 6},${roofLowY - (spec.roofHighSide === "right" ? -10 : 10)} ${pad + innerW * 0.5 + 6},${roofLowY - (spec.roofHighSide === "right" ? -10 : 10)} ${pad + innerW * 0.5},${roofLowY}`}
             className="slope-arrow-head"
           />
           <text x={pad + 12} y={highY + (spec.roofHighSide === "right" ? -12 : 22)} className="high-label">
@@ -155,6 +168,9 @@ function PlanView({ spec }: EngineeringViewsProps) {
       <line x1={width - 22} y1={pad} x2={width - 22} y2={pad + innerH} className="dimension-line" />
       <text x={width - 28} y={height / 2} textAnchor="middle" transform={`rotate(-90 ${width - 28} ${height / 2})`} className="drawing-label">
         {(spec.widthMm / 1000).toFixed(1)}m width, piers @ {Math.round(pierSpacingWidthMm)}mm
+      </text>
+      <text x={width - 50} y={height / 2} textAnchor="middle" transform={`rotate(-90 ${width - 50} ${height / 2})`} className="drawing-label roof-dimension">
+        {roofWidthM(spec).toFixed(1)}m roof incl. {spec.roofSideOverhangMm}mm eaves
       </text>
       <text x={pad} y="25" className="drawing-title">
         Plan: {spec.pierColumns} x {spec.pierRows} piers, joist line over every pier column
@@ -205,6 +221,7 @@ function ElevationView({ spec }: EngineeringViewsProps) {
   const roofY1 = spec.roofFallDirection === "length" ? lowY : highY;
   const profileHighX = spec.roofHighSide === "right" ? 100 : 0;
   const profileLowX = spec.roofHighSide === "right" ? 0 : 100;
+  const profileEaveX = Math.max(10, (100 * spec.roofSideOverhangMm) / spec.widthMm);
   const sideLabel =
     spec.roofFallDirection === "length"
       ? `roof falls ${(spec.roofRiseMm / 1000).toFixed(2)}m along length`
@@ -258,6 +275,7 @@ function ElevationView({ spec }: EngineeringViewsProps) {
             className="outline-line"
           />
           <line x1={profileHighX} y1="10" x2={profileLowX} y2="28" className="roof-line" />
+          <line x1={-profileEaveX} y1={profileHighX === 0 ? 10 : 28} x2={100 + profileEaveX} y2={profileHighX === 100 ? 10 : 28} className="roof-overhang-line" />
           <text x={profileHighX === 0 ? -2 : 72} y="6" className="high-label">
             HIGH
           </text>
@@ -266,6 +284,9 @@ function ElevationView({ spec }: EngineeringViewsProps) {
           </text>
           <text x="-20" y="91" className="micro-label">
             {roofHighSideLabel(spec)} to {roofLowSideLabel(spec)}
+          </text>
+          <text x="-20" y="106" className="micro-label">
+            roof width {roofWidthM(spec).toFixed(1)}m, {spec.roofSideOverhangMm}mm eaves
           </text>
         </g>
       )}

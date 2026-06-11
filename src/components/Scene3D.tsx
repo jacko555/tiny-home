@@ -15,8 +15,11 @@ import {
   pierPositions,
   roofHeightAt,
   roofHighSideLabel,
+  roofSideOverhangM,
   roofLowSideLabel,
+  ROOF_END_OVERHANG_M,
   roofTiePostCentersM,
+  roofWidthM,
 } from "../lib/geometry";
 
 type Point3 = [number, number, number];
@@ -335,7 +338,12 @@ function WallFrame({ spec, textures }: SceneLayerProps) {
 function RoofFrame({ spec, textures }: SceneLayerProps) {
   const lengthM = mmToM(spec.lengthMm);
   const widthM = mmToM(spec.widthMm);
-  const overhang = 0.22;
+  const sideOverhang = roofSideOverhangM(spec);
+  const endOverhang = ROOF_END_OVERHANG_M;
+  const roofMinX = -lengthM / 2 - endOverhang;
+  const roofMaxX = lengthM / 2 + endOverhang;
+  const roofMinZ = -widthM / 2 - sideOverhang;
+  const roofMaxZ = widthM / 2 + sideOverhang;
   const timber = "#b4773c";
   const spacingM = mmToM(spec.rafterSpacingMm);
 
@@ -343,13 +351,13 @@ function RoofFrame({ spec, textures }: SceneLayerProps) {
 
   const rafterLines =
     spec.roofFallDirection === "length"
-      ? divisions(-widthM / 2 - overhang, widthM / 2 + overhang, spacingM).map((z) => ({
-          start: roofPoint(-lengthM / 2 - overhang, z),
-          end: roofPoint(lengthM / 2 + overhang, z),
+      ? divisions(roofMinZ, roofMaxZ, spacingM).map((z) => ({
+          start: roofPoint(roofMinX, z),
+          end: roofPoint(roofMaxX, z),
         }))
-      : divisions(-lengthM / 2 - overhang, lengthM / 2 + overhang, spacingM).map((x) => ({
-          start: roofPoint(x, -widthM / 2 - overhang),
-          end: roofPoint(x, widthM / 2 + overhang),
+      : divisions(roofMinX, roofMaxX, spacingM).map((x) => ({
+          start: roofPoint(x, roofMinZ),
+          end: roofPoint(x, roofMaxZ),
         }));
 
   return (
@@ -358,29 +366,29 @@ function RoofFrame({ spec, textures }: SceneLayerProps) {
         <BeamBetween key={`rafter-${index}`} start={beam.start} end={beam.end} size={[0.045, 0.14]} color={timber} texture={textures.treatedPine} />
       ))}
       <BeamBetween
-        start={roofPoint(-lengthM / 2 - overhang, -widthM / 2 - overhang)}
-        end={roofPoint(lengthM / 2 + overhang, -widthM / 2 - overhang)}
+        start={roofPoint(roofMinX, roofMinZ)}
+        end={roofPoint(roofMaxX, roofMinZ)}
         size={[0.045, 0.14]}
         color="#8f5f32"
         texture={textures.treatedPine}
       />
       <BeamBetween
-        start={roofPoint(-lengthM / 2 - overhang, widthM / 2 + overhang)}
-        end={roofPoint(lengthM / 2 + overhang, widthM / 2 + overhang)}
+        start={roofPoint(roofMinX, roofMaxZ)}
+        end={roofPoint(roofMaxX, roofMaxZ)}
         size={[0.045, 0.14]}
         color="#8f5f32"
         texture={textures.treatedPine}
       />
       <BeamBetween
-        start={roofPoint(-lengthM / 2 - overhang, -widthM / 2 - overhang)}
-        end={roofPoint(-lengthM / 2 - overhang, widthM / 2 + overhang)}
+        start={roofPoint(roofMinX, roofMinZ)}
+        end={roofPoint(roofMinX, roofMaxZ)}
         size={[0.045, 0.14]}
         color="#8f5f32"
         texture={textures.treatedPine}
       />
       <BeamBetween
-        start={roofPoint(lengthM / 2 + overhang, -widthM / 2 - overhang)}
-        end={roofPoint(lengthM / 2 + overhang, widthM / 2 + overhang)}
+        start={roofPoint(roofMaxX, roofMinZ)}
+        end={roofPoint(roofMaxX, roofMaxZ)}
         size={[0.045, 0.14]}
         color="#8f5f32"
         texture={textures.treatedPine}
@@ -393,7 +401,12 @@ function ExteriorShell({ spec, textures }: SceneLayerProps) {
   const lengthM = mmToM(spec.lengthMm);
   const widthM = mmToM(spec.widthMm);
   const floorY = mmToM(spec.floorHeightMm) + 0.18;
-  const overhang = 0.22;
+  const sideOverhang = roofSideOverhangM(spec);
+  const endOverhang = ROOF_END_OVERHANG_M;
+  const roofMinX = -lengthM / 2 - endOverhang;
+  const roofMaxX = lengthM / 2 + endOverhang;
+  const roofMinZ = -widthM / 2 - sideOverhang;
+  const roofMaxZ = widthM / 2 + sideOverhang;
   const wallColor = "#f1f4ef";
   const roofColor = "#f7faf7";
   const offset = 0.032;
@@ -402,13 +415,13 @@ function ExteriorShell({ spec, textures }: SceneLayerProps) {
   const roof = (x: number, z: number): Point3 => [x, roofHeightAt(spec, x, z) + 0.075, z];
   const roofRibRuns =
     spec.roofFallDirection === "width"
-      ? divisions(-lengthM / 2 - overhang, lengthM / 2 + overhang, 0.28).map((x) => ({
-          start: roof(x, -widthM / 2 - overhang),
-          end: roof(x, widthM / 2 + overhang),
+      ? divisions(roofMinX, roofMaxX, 0.28).map((x) => ({
+          start: roof(x, roofMinZ),
+          end: roof(x, roofMaxZ),
         }))
-      : divisions(-widthM / 2 - overhang, widthM / 2 + overhang, 0.28).map((z) => ({
-          start: roof(-lengthM / 2 - overhang, z),
-          end: roof(lengthM / 2 + overhang, z),
+      : divisions(roofMinZ, roofMaxZ, 0.28).map((z) => ({
+          start: roof(roofMinX, z),
+          end: roof(roofMaxX, z),
         }));
   const wallRibXs = divisions(-lengthM / 2 + 0.2, lengthM / 2 - 0.2, 0.32);
   const highWallZ = spec.roofHighSide === "right" ? widthM / 2 + offset * 1.35 : -widthM / 2 - offset * 1.35;
@@ -468,10 +481,10 @@ function ExteriorShell({ spec, textures }: SceneLayerProps) {
         opacity={0.96}
         metalness={0.18}
         points={[
-          roof(-lengthM / 2 - overhang, -widthM / 2 - overhang),
-          roof(lengthM / 2 + overhang, -widthM / 2 - overhang),
-          roof(lengthM / 2 + overhang, widthM / 2 + overhang),
-          roof(-lengthM / 2 - overhang, widthM / 2 + overhang),
+          roof(roofMinX, roofMinZ),
+          roof(roofMaxX, roofMinZ),
+          roof(roofMaxX, roofMaxZ),
+          roof(roofMinX, roofMaxZ),
         ]}
       />
       {roofRibRuns.map((rib, index) => (
@@ -608,9 +621,12 @@ function DoorDeckAndSteps({ spec, textures }: SceneLayerProps) {
 function FixingsLayer({ spec }: Scene3DProps) {
   const lengthM = mmToM(spec.lengthMm);
   const widthM = mmToM(spec.widthMm);
+  const sideOverhang = roofSideOverhangM(spec);
   const floorY = mmToM(spec.floorHeightMm) + 0.15;
   const metal = "#6f7b7f";
   const roofScrewRows = divisions(-lengthM / 2, lengthM / 2, 0.8);
+  const lowEdgeScrewZ = -widthM / 2 - sideOverhang + 0.12;
+  const highEdgeScrewZ = widthM / 2 + sideOverhang - 0.12;
   const roofTiePosts = roofTiePostCentersM(spec);
 
   return (
@@ -627,11 +643,11 @@ function FixingsLayer({ spec }: Scene3DProps) {
       })}
       {roofScrewRows.map((x, index) => (
         <group key={`roof-screw-${index}`}>
-          <mesh position={[x, roofHeightAt(spec, x, -widthM / 2) + 0.11, -widthM / 2 - 0.09]} castShadow>
+          <mesh position={[x, roofHeightAt(spec, x, lowEdgeScrewZ) + 0.11, lowEdgeScrewZ]} castShadow>
             <cylinderGeometry args={[0.018, 0.018, 0.018, 16]} />
             <meshStandardMaterial color="#56646b" metalness={0.7} roughness={0.35} />
           </mesh>
-          <mesh position={[x, roofHeightAt(spec, x, widthM / 2) + 0.11, widthM / 2 + 0.09]} castShadow>
+          <mesh position={[x, roofHeightAt(spec, x, highEdgeScrewZ) + 0.11, highEdgeScrewZ]} castShadow>
             <cylinderGeometry args={[0.018, 0.018, 0.018, 16]} />
             <meshStandardMaterial color="#56646b" metalness={0.7} roughness={0.35} />
           </mesh>
@@ -715,14 +731,15 @@ function OpeningsLayer({ spec, textures }: SceneLayerProps) {
 function TinyHomeModel({ spec }: Scene3DProps) {
   const lengthM = mmToM(spec.lengthMm);
   const widthM = mmToM(spec.widthMm);
+  const sideOverhang = roofSideOverhangM(spec);
   const textures = useTexturePack();
-  const highZ = spec.roofHighSide === "right" ? widthM / 2 : -widthM / 2;
-  const lowZ = spec.roofHighSide === "right" ? -widthM / 2 : widthM / 2;
+  const highZ = spec.roofHighSide === "right" ? widthM / 2 + sideOverhang : -widthM / 2 - sideOverhang;
+  const lowZ = spec.roofHighSide === "right" ? -widthM / 2 - sideOverhang : widthM / 2 + sideOverhang;
 
   return (
     <group>
       <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.004, 0]} receiveShadow>
-        <planeGeometry args={[Math.max(8, lengthM + 1.8), Math.max(5.5, widthM + 1.8)]} />
+        <planeGeometry args={[Math.max(8, lengthM + 1.8), Math.max(5.5, roofWidthM(spec) + 1.2)]} />
         <meshStandardMaterial color="#d7d2c5" roughness={0.9} />
       </mesh>
 
@@ -738,6 +755,9 @@ function TinyHomeModel({ spec }: Scene3DProps) {
       {spec.layers.fixings && <FixingsLayer spec={spec} />}
 
       <Label position={[0, 0.08, widthM / 2 + 0.58]}>6m long face</Label>
+      <Label position={[0, roofHeightAt(spec, 0, highZ) + 0.22, highZ]}>
+        {`${roofWidthM(spec).toFixed(1)}m roof width`}
+      </Label>
       <Label position={[lengthM / 2 + 0.52, 1.55, 0]}>3m max height</Label>
       {spec.roofFallDirection === "width" && (
         <>

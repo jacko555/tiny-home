@@ -14,7 +14,7 @@ import {
 } from "lucide-react";
 import type { FlooringStack, LayerKey, RoofFallDirection, RoofHighSide, TinyHomeSpec, ViewMode } from "../types";
 import { layerLabels, viewPresets } from "../lib/spec";
-import { roofHighSideLabel, roofLowSideLabel } from "../lib/geometry";
+import { roofHighSideLabel, roofLowSideLabel, roofWidthM } from "../lib/geometry";
 
 interface ControlsPanelProps {
   spec: TinyHomeSpec;
@@ -182,8 +182,20 @@ export function ControlsPanel({
           <span>
             <strong>Low:</strong> {roofLowSideLabel(spec)}
           </span>
+          <span>
+            <strong>Roof width:</strong> {roofWidthM(spec).toFixed(1)}m incl. eaves
+          </span>
         </div>
         <NumberField label="Roof rise" value={spec.roofRiseMm} min={120} max={900} step={25} unit="mm" onChange={(roofRiseMm) => onSpecChange({ roofRiseMm })} />
+        <NumberField
+          label="Side roof overhang"
+          value={spec.roofSideOverhangMm}
+          min={0}
+          max={900}
+          step={25}
+          unit="mm"
+          onChange={(roofSideOverhangMm) => onSpecChange({ roofSideOverhangMm })}
+        />
         <NumberField label="Stud spacing" value={spec.studSpacingMm} min={300} max={900} step={50} unit="mm" onChange={(studSpacingMm) => onSpecChange({ studSpacingMm })} />
         <NumberField label="Joist spacing" value={spec.joistSpacingMm} min={300} max={900} step={50} unit="mm" onChange={(joistSpacingMm) => onSpecChange({ joistSpacingMm })} />
         <NumberField label="Rafter spacing" value={spec.rafterSpacingMm} min={300} max={900} step={50} unit="mm" onChange={(rafterSpacingMm) => onSpecChange({ rafterSpacingMm })} />

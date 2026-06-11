@@ -615,6 +615,13 @@ button {
   stroke-width: 2;
 }
 
+.plan-roof-overhang {
+  fill: rgba(232, 238, 234, 0.44);
+  stroke: #73817a;
+  stroke-width: 1.7;
+  stroke-dasharray: 9 5;
+}
+
 .plan-cladding,
 .elev-cladding {
   fill: rgba(238, 241, 237, 0.72);
@@ -728,6 +735,11 @@ button {
   font-size: 13px;
 }
 
+.drawing-label.roof-dimension {
+  fill: #49646a;
+  font-size: 11px;
+}
+
 .drawing-title {
   font-size: 14px;
 }
@@ -771,6 +783,13 @@ button {
   stroke: #49646a;
   stroke-width: 4;
   stroke-linecap: round;
+}
+
+.roof-overhang-line {
+  stroke: #49646a;
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-dasharray: 7 4;
 }
 
 .outline-line {

@@ -1,6 +1,6 @@
 import { CheckCircle2, ClipboardList, ShieldAlert } from "lucide-react";
 import type { MaterialEstimate, TinyHomeSpec } from "../types";
-import { roofHighSideLabel, roofLowSideLabel } from "../lib/geometry";
+import { roofHighSideLabel, roofLowSideLabel, roofWidthM } from "../lib/geometry";
 
 interface AssemblyChecklistProps {
   spec: TinyHomeSpec;
@@ -44,7 +44,8 @@ export function AssemblyChecklist({ spec, estimates }: AssemblyChecklistProps) {
     {
       title: "Roof",
       items: [
-        `Single-slope roof falls from ${roofHighSideLabel(spec)} to ${roofLowSideLabel(spec)} across the 3m width`,
+        `Single-slope roof falls from ${roofHighSideLabel(spec)} to ${roofLowSideLabel(spec)} across a ${roofWidthM(spec).toFixed(1)}m roof width`,
+        `${spec.roofSideOverhangMm}mm side overhang each long side over the ${(spec.widthMm / 1000).toFixed(1)}m house body`,
         "Six post-to-roof-frame tie points are shown for engineer-confirmed M10 bolt and bracket spacing.",
         `${buyLine(estimates, "colorbondRoof")} Surfmist/white roof sheet allowance`,
         `${buyLine(estimates, "roofingScrews")} roof screw allowance with EPDM seals`,

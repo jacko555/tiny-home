@@ -35,6 +35,7 @@ export interface TinyHomeSpec {
   maxHeightMm: number;
   floorHeightMm: number;
   roofRiseMm: number;
+  roofSideOverhangMm: number;
   roofFallDirection: RoofFallDirection;
   roofHighSide: RoofHighSide;
   flooringStack: FlooringStack;

@@ -7,8 +7,13 @@ import {
   footingColumnCentersMm,
   footingRowCentersMm,
   infillJoistCentersMm,
+  ROOF_END_OVERHANG_MM,
+  roofLengthM,
+  roofLengthMm,
   roofTiePostCentersM,
   roofRunM,
+  roofWidthM,
+  roofWidthMm,
 } from "./geometry";
 
 const MAX_CONCEPT_PIER_SPACING_MM = 1500;
@@ -167,14 +172,14 @@ export function calculateEstimates(
 
   const rafterCount =
     spec.roofFallDirection === "length"
-      ? spacedCount(spec.widthMm, spec.rafterSpacingMm)
-      : spacedCount(spec.lengthMm, spec.rafterSpacingMm);
+      ? spacedCount(roofWidthMm(spec), spec.rafterSpacingMm)
+      : spacedCount(roofLengthMm(spec), spec.rafterSpacingMm);
   const roofRafterMm = rafterCount * roofRunM(spec) * 1000;
-  const roofEdgeMm = 2 * spec.lengthMm + 2 * spec.widthMm;
+  const roofEdgeMm = 2 * roofLengthMm(spec) + 2 * roofWidthMm(spec);
   const roofBattenMm =
     spec.roofFallDirection === "length"
-      ? 4 * spec.widthMm
-      : Math.ceil(spec.widthMm / 900) * spec.lengthMm;
+      ? 4 * roofWidthMm(spec)
+      : Math.ceil(roofWidthMm(spec) / 900) * roofLengthMm(spec);
 
   const totalH3FrameMm = floorFrame140Mm + studMm + plateMm + roofRafterMm + roofEdgeMm + roofBattenMm;
   const h3Pieces = piecesForLength(
@@ -185,7 +190,7 @@ export function calculateEstimates(
 
   const lengthM = spec.lengthMm / 1000;
   const widthM = spec.widthMm / 1000;
-  const roofAreaSqM = (roofRunM(spec) + 0.45) * (spec.roofFallDirection === "length" ? widthM + 0.45 : lengthM + 0.45);
+  const roofAreaSqM = roofRunM(spec) * (spec.roofFallDirection === "length" ? roofWidthM(spec) : roofLengthM(spec));
   const wallAreaSqM = (wallPerimeterMm / 1000) * (averageWallHeightMm / 1000);
   const openingCreditSqM =
     (spec.openings.frontDoor ? 1.8 : 0) +
@@ -479,10 +484,10 @@ export function calculateEstimates(
       purchaseLabel: `${round1(roofAreaSqM * wasteFactor)} sq m allowance`,
       wasteQuantity: roofAreaSqM * (wasteFactor - 1),
       estimatedCost: round2(roofAreaSqM * wasteFactor * materials.colorbondRoof.unitPrice),
-      formulaExplanation: "Sloped roof run area plus overhang and waste allowance.",
+      formulaExplanation: `Sloped roof area using ${(roofWidthMm(spec) / 1000).toFixed(1)}m roof width, ${spec.roofSideOverhangMm}mm side eaves, and ${Math.round(ROOF_END_OVERHANG_MM)}mm end eaves.`,
       requiredReview: true,
       assemblyStage: "roof",
-      notes: ["Includes a small overhang allowance. Flashings, gutters, and fixings are separate."],
+      notes: ["Roof overhang affects uplift, fascia, gutters, flashings, and sheet layout; engineer/manufacturer review required."],
     },
     {
       materialId: "roofingScrews",
@@ -625,11 +630,19 @@ export function designWarnings(spec: TinyHomeSpec): DesignWarning[] {
     });
   }
 
-  if (spec.roofFallDirection === "width" && spec.roofHighSide !== "left") {
+  if (spec.roofFallDirection === "width" && spec.roofHighSide !== "right") {
     warnings.push({
       severity: "warning",
       title: "Roof high side changed",
-      message: "The requested V2 default is left 6m wall high, falling across the 3m width.",
+      message: "The current default is right 6m wall high, falling across the roof width.",
+    });
+  }
+
+  if (spec.roofSideOverhangMm > 0) {
+    warnings.push({
+      severity: "info",
+      title: "Roof overhang",
+      message: `Roof is ${(roofWidthMm(spec) / 1000).toFixed(1)}m wide over the ${(spec.widthMm / 1000).toFixed(1)}m house body, with ${spec.roofSideOverhangMm}mm side eaves requiring uplift, fascia, gutter, and flashing review.`,
     });
   }
 
