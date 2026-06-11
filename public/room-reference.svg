@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="560" viewBox="0 0 900 560">
+  <rect width="900" height="560" fill="#f5f2ea"/>
+  <g transform="translate(92 72)">
+    <rect x="0" y="0" width="650" height="330" fill="#fffaf0" stroke="#2f3a38" stroke-width="8"/>
+    <path d="M0 0h650l-38-58h-574z" fill="#eef0ea" stroke="#2f3a38" stroke-width="8"/>
+    <path d="M0 0l38-58M650 0l-38-58" stroke="#2f3a38" stroke-width="8"/>
+    <g stroke="#2f3a38" stroke-width="5">
+      <path d="M0 110h650M0 220h650M130 0v330M260 0v330M390 0v330M520 0v330"/>
+    </g>
+    <g fill="#c7c1b4" stroke="#2f3a38" stroke-width="5">
+      <circle cx="0" cy="0" r="22"/><circle cx="162.5" cy="0" r="22"/><circle cx="325" cy="0" r="22"/><circle cx="487.5" cy="0" r="22"/><circle cx="650" cy="0" r="22"/>
+      <circle cx="0" cy="165" r="22"/><circle cx="162.5" cy="165" r="22"/><circle cx="325" cy="165" r="22"/><circle cx="487.5" cy="165" r="22"/><circle cx="650" cy="165" r="22"/>
+      <circle cx="0" cy="330" r="22"/><circle cx="162.5" cy="330" r="22"/><circle cx="325" cy="330" r="22"/><circle cx="487.5" cy="330" r="22"/><circle cx="650" cy="330" r="22"/>
+    </g>
+    <rect x="300" y="330" width="100" height="88" fill="#b98a54" stroke="#2f3a38" stroke-width="6"/>
+    <path d="M400 374h120v44H300v-88h100z" fill="#c99b62" stroke="#2f3a38" stroke-width="6"/>
+    <text x="325" y="-82" font-family="Inter, Arial, sans-serif" font-size="30" fill="#2f3a38">right 6m wall high side</text>
+    <text x="214" y="385" font-family="Inter, Arial, sans-serif" font-size="26" fill="#2f3a38">door + timber deck</text>
+  </g>
+  <g font-family="Inter, Arial, sans-serif" fill="#2f3a38">
+    <text x="92" y="500" font-size="30">6m x 3m raised tiny-home concept</text>
+    <text x="92" y="532" font-size="20">5 x 3 pier grid, doubled footing-centre members, single infill joists</text>
+  </g>
+</svg>

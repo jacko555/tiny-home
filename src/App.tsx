@@ -141,7 +141,7 @@ function App() {
                 single-slope roof, and a 3m maximum height target.
               </p>
             </div>
-            <img src="/room-reference.png" alt="Uploaded tiny home sketch showing pier grid and sloped roof" />
+            <img src="/room-reference.svg" alt="Tiny home sketch showing pier grid and sloped roof" />
           </section>
         </section>
 
