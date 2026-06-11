@@ -9,6 +9,7 @@ import { TextureLibrary } from "./components/TextureLibrary";
 import { AssemblyChecklist } from "./components/AssemblyChecklist";
 import { FoundationCheckPanel } from "./components/FoundationCheckPanel";
 import { initialMaterials } from "./data/materials";
+import { publicAsset } from "./lib/assets";
 import { calculateEstimates, calculateFoundationCheck, designWarnings, totalEstimate } from "./lib/estimates";
 import { roofHighSideLabel, roofLowSideLabel } from "./lib/geometry";
 import { clampSpec, defaultSpec, viewPresets } from "./lib/spec";
@@ -141,7 +142,7 @@ function App() {
                 single-slope roof, and a 3m maximum height target.
               </p>
             </div>
-            <img src="/room-reference.svg" alt="Tiny home sketch showing pier grid and sloped roof" />
+            <img src={publicAsset("room-reference.svg")} alt="Tiny home sketch showing pier grid and sloped roof" />
           </section>
         </section>
 
