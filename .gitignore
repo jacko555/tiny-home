@@ -1,0 +1,7 @@
+node_modules/
+dist/
+outputs/
+work/
+colorbond-visible-check.png
+.DS_Store
+*.log
