@@ -781,8 +781,8 @@ button {
 
 .reference-panel {
   display: grid;
-  grid-template-columns: minmax(220px, 0.82fr) minmax(240px, 1.18fr);
-  gap: 12px;
+  grid-template-columns: minmax(220px, 0.62fr) minmax(320px, 1.38fr);
+  gap: 14px;
   align-items: center;
   padding: 14px;
 }
@@ -797,14 +797,39 @@ button {
   font-size: 0.86rem;
 }
 
+.reference-images {
+  display: grid;
+  grid-template-columns: minmax(0, 0.78fr) minmax(0, 1fr);
+  gap: 10px;
+  align-items: stretch;
+}
+
+.reference-images figure {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+}
+
+.reference-images figcaption {
+  color: var(--muted);
+  font-size: 0.76rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
 .reference-panel img {
   display: block;
   width: 100%;
-  max-height: 270px;
+  height: 270px;
   object-fit: contain;
   border: 1px solid #dcd6ca;
   border-radius: 8px;
   background: #0d0d0d;
+}
+
+.reference-images figure:nth-child(2) img {
+  background: #f5f2ea;
 }
 
 .cost-total {
@@ -1158,7 +1183,8 @@ button {
   .estimate-list,
   .texture-grid,
   .checklist-grid,
-  .reference-panel {
+  .reference-panel,
+  .reference-images {
     grid-template-columns: 1fr;
   }
 }

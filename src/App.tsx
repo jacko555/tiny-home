@@ -135,14 +135,23 @@ function App() {
 
           <section className="panel reference-panel" aria-label="Uploaded reference sketch">
             <div>
-              <p className="eyebrow">Reference sketch</p>
-              <h2>Uploaded room concept</h2>
+              <p className="eyebrow">Reference sketches</p>
+              <h2>Original PDF sketch and clean schematic</h2>
               <p>
-                The generated model keeps the sketch intent: concrete pier grid, timber frame, 6m x 3m footprint,
-                single-slope roof, and a 3m maximum height target.
+                The temporary macOS pasteboard PDF path has expired, but the preserved sketch preview is kept here
+                beside the cleaned design reference used by the model.
               </p>
             </div>
-            <img src={publicAsset("room-reference.svg")} alt="Tiny home sketch showing pier grid and sloped roof" />
+            <div className="reference-images">
+              <figure>
+                <img src={publicAsset("room-reference.png")} alt="Original uploaded tiny home sketch from the PDF" />
+                <figcaption>Original uploaded sketch</figcaption>
+              </figure>
+              <figure>
+                <img src={publicAsset("room-reference.svg")} alt="Clean tiny home schematic showing pier grid and sloped roof" />
+                <figcaption>Clean schematic</figcaption>
+              </figure>
+            </div>
           </section>
         </section>
 
